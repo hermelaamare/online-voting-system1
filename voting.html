@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Voting System</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #74EBD5 0%, #9FACE6 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 60%;
+      max-width: 800px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      text-align: center;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .candidate {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      transition: transform 0.2s;
+    }
+    .candidate:hover {
+      transform: scale(1.05);
+      background: #e3f2fd;
+    }
+    .candidate input {
+      margin-right: 10px;
+    }
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s, transform 0.2s;
+    }
+    .submit-btn:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+    }
+    .results {
+      margin-top: 20px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    li:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Vote for Your Favorite Candidate</h1>
+    <form id="votingForm">
+      <div class="candidate">
+        <input type="radio" name="candidate" value="Hermela" id="candidate1">
+        <label for="candidate1">Hermela</label>
+      </div>
+      <div class="candidate">
+        <input type="radio" name="candidate" value="Hamerenoh" id="candidate2">
+        <label for="candidate2">Hamerenoh</label>
+      </div>
+      <div class="candidate">
+        <input type="radio" name="candidate" value="Chris" id="candidate3">
+        <label for="candidate3">Chris</label>
+      </div>
+      <button type="submit" class="submit-btn">Submit Vote</button>
+    </form>
+
+    <div class="results" id="results" style="display: none;">
+      <h2>Voting Results</h2>
+      <ul id="resultsList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Load votes from localStorage or initialize
+    const votes = JSON.parse(localStorage.getItem('votes')) || { Hermela: 0, Hamerenoh: 0, Chris: 0 };
+    let voteCount = parseInt(localStorage.getItem('voteCount')) || 0;
+
+    document.getElementById('votingForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const selectedCandidate = document.querySelector('input[name="candidate"]:checked');
+
+      if (selectedCandidate) {
+        const candidate = selectedCandidate.value;
+        votes[candidate]++;
+        voteCount++;
+        localStorage.setItem('votes', JSON.stringify(votes));
+        localStorage.setItem('voteCount', voteCount);
+
+        alert(`You voted for: ${candidate}`);
+
+        if (voteCount >= 10) {
+          showResults();
+        } else {
+          selectedCandidate.checked = false;
+        }
+      } else {
+        alert('Please select a candidate before submitting your vote.');
+      }
+    });
+
+    function showResults() {
+      const resultsDiv = document.getElementById('results');
+      const resultsList = document.getElementById('resultsList');
+      resultsList.innerHTML = '';
+
+      for (const candidate in votes) {
+        resultsList.innerHTML += `<li><strong>${candidate}</strong>: ${votes[candidate]} votes</li>`;
+      }
+
+      resultsDiv.style.display = 'block';
+    }
+
+    // Show results automatically if 10 votes are already reached
+    if (voteCount >= 10) {
+      showResults();
+    }
+  </script>
+</body>
+</html>
